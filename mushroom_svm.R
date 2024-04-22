@@ -16,9 +16,9 @@ library(kernlab)
 # Reading Dataset
 mushrooms.df <- read.csv("/home/jrzvnn/Documents/Projects/mushroom-svm/mushrooms.csv")
 
-#################################################
-
-# Exploratory Data Analysis
+###############################################
+#          Exploratory Data Analysis          #
+###############################################
 
 # Class Distribution
 labels <- c('Edible', 'Poisonous')
@@ -43,7 +43,6 @@ vis_miss(mushrooms.df)
 dim(mushrooms.df)
 str(mushrooms.df)
 
-# Class Distributions for every Features
 # Define function to convert ggplot to plotly
 ggplot_to_plotly <- function(ggplot_obj){
   p <- ggplotly(ggplot_obj)
@@ -55,6 +54,8 @@ ggplot_to_plotly <- function(ggplot_obj){
 #Taking the backup the data set Mushroom & checking the distinct value of it
 mush <- mushrooms.df %>% distinct()
 
+# Class Distributions for every Features
+
 # Convert ggplot histograms to plotly histograms with customizations
 cap_shape_hist <- ggplot(mush, aes(x = cap.shape, fill = class)) + 
   geom_bar(alpha = 1, colour = "black", linewidth = 0.5) + 
@@ -64,8 +65,7 @@ cap_shape_hist <- ggplot(mush, aes(x = cap.shape, fill = class)) +
 cap_shape_plotly <- ggplot_to_plotly(cap_shape_hist)
 cap_shape_plotly
 
-cat("#################################################\n") # Divider coz na o-OC ako kapag dikit dikit
-
+# Bar Graph for plotting of few features - cap surface, cap color, bruises, odor
 cap_surface_hist <- ggplot(mush, aes(x = cap.surface, fill = class)) + 
   geom_bar(alpha = 1, colour = "black", linewidth = 0.5) +  
   ggtitle("CAP SURFACE") + 
@@ -74,17 +74,13 @@ cap_surface_hist <- ggplot(mush, aes(x = cap.surface, fill = class)) +
 cap_surface_plotly <- ggplot_to_plotly(cap_surface_hist)
 cap_surface_plotly
 
-cat("#################################################\n")
-
-cap_color_hist <- ggplot(mush, aes(x = cap.color, fill = class)) + 
+cap_clor_hist <- ggplot(mush, aes(x = cap.color, fill = class)) + 
   geom_bar(alpha = 1, colour = "black", linewidth = 0.5) +  
   ggtitle("CAP COLOR") + 
   theme(plot.title = element_text(hjust = 0)) + 
   scale_fill_manual(values = c("e" = "#018100", "p" = "#fe0001"))
 cap_color_plotly <- ggplot_to_plotly(cap_color_hist)
 cap_color_plotly
-
-cat("#################################################\n")
 
 bruises_hist <- ggplot(mush, aes(x = bruises, fill = class)) + 
   geom_bar(alpha = 1, colour = "black", linewidth = 0.5) +  
@@ -94,8 +90,6 @@ bruises_hist <- ggplot(mush, aes(x = bruises, fill = class)) +
 bruises_plotly <- ggplot_to_plotly(bruises_hist)
 bruises_plotly
 
-cat("#################################################\n")
-
 odor_hist <- ggplot(mush, aes(x = odor, fill = class)) + 
   geom_bar(alpha = 1, colour = "black", linewidth = 0.5) +  
   ggtitle("ODOR") + 
@@ -104,7 +98,6 @@ odor_hist <- ggplot(mush, aes(x = odor, fill = class)) +
 odor_plotly <- ggplot_to_plotly(odor_hist)
 odor_plotly
 
-#################################################
 
 # Bar Graph for plotting of few features - Gill Attachment, Gill Spacing, Gill Size, Gill Color
 gill_attachment <- ggplot(mush, aes(x = gill.attachment, fill = class)) + 
@@ -138,7 +131,6 @@ gill_spacing_plotly
 gill_size_plotly
 gill_color_plotly
 
-cat("#################################################\n")
 
 # Bar Graph for plotting of few features - Stalk Shape & Root
 stalk_shape <- ggplot(mush, aes(x = stalk.shape, fill = class)) + 
@@ -156,7 +148,6 @@ stalk_root_plotly <- ggplot_to_plotly(stalk_root)
 stalk_shape_plotly
 stalk_root_plotly
 
-cat("#################################################\n")
 
 # Bar Graph for plotting of few features - Stalk Surface above & below ring
 stalk_surface_above <- ggplot(mush, aes(x = stalk.surface.above.ring, fill = class)) + 
@@ -174,7 +165,7 @@ stalk_surface_below_plotly <- ggplot_to_plotly(stalk_surface_below)
 stalk_surface_above_plotly
 stalk_surface_below_plotly
 
-cat("#################################################\n")
+
 
 # Bar Graph for plotting of few features - Stalk Color above & below ring
 stalk_color_above <- ggplot(mush, aes(x = stalk.color.above.ring, fill = class)) + 
@@ -192,7 +183,6 @@ stalk_color_below_plotly <- ggplot_to_plotly(stalk_color_below)
 stalk_color_above_plotly
 stalk_color_below_plotly
 
-cat("#################################################\n")
 
 # Bar Graph for plotting of few features - Veil Type & Veil Color
 veil_type <- ggplot(mush, aes(x = veil.type, fill = class)) + 
@@ -213,7 +203,6 @@ veil_color_plotly <- ggplot_to_plotly(veil_color)
 veil_type_plotly
 veil_color_plotly
 
-cat("#################################################\n")
 
 # Bar Graph for plotting of few features - Ring Number & Type
 ring_number <- ggplot(mush, aes(x = ring.number, fill = class)) + 
@@ -234,7 +223,6 @@ ring_type_plotly <- ggplot_to_plotly(ring_type)
 ring_number_plotly
 ring_type_plotly
 
-cat("#################################################\n")
 
 # Bar Graph for plotting of few features - Spore Print Color, Population & Habitat
 spore_print_color <- ggplot(mush, aes(x = spore.print.color, fill = class)) + 
@@ -274,6 +262,7 @@ my_theme <- theme(
   axis.title = element_text(size = 16),                # Increase axis title size
   axis.text = element_text(size = 14)                  # Increase axis text size
 )
+
 
 # visualization of instances' distributions
 ggplot(mush, aes(x = cap.color, y = bruises, col = class)) + 
@@ -316,7 +305,7 @@ ggplot(mush, aes(x = class, y = odor, col = class)) +
   my_theme +
   theme(plot.margin = margin(20, 20, 20, 20))
 
-# Stalk root 
+# This will visualize the distribution of 'stalk.root' indicating its limited relevance in classifying the mushrooms.
 ggplot(mushrooms.df, aes(x = class, y = stalk.root, col = class)) + 
   geom_jitter() + ggtitle("Classification of instances, based on Stalk root") +
   scale_color_manual(values = c("#018100", "#fe0001"), 
@@ -328,20 +317,17 @@ ggplot(mushrooms.df, aes(x = class, y = stalk.root, col = class)) +
 summary(mushrooms.df)
 sum(is.na(mushrooms.df)) # No Na values
 
-#################################################
 
-# Data Preprocessing
+###############################################
+#             Data Preprocessing              #
+###############################################
 
 # Removing veil.type & stalk.root
 mushrooms.df$veil.type <- NULL 
 mushrooms.df$stalk.root <- NULL
 
-# Data Set Variable Labeling
-# Manipulate the dataset to make it more readable
-# (Code for labeling the dataset variables)
-
 # Data Splitting 70% | 30%
-split.data <- function(data, p = 0.7, s = 1){
+split.data <- function(data, p, s = 1){
   set.seed(s)
   index <- sample(1:dim(data)[1])
   train <- data[index[1:floor(dim(data)[1] * p)], ]
@@ -368,34 +354,41 @@ cat("Train/Test Ratio:", nrow(mushrooms.training) / nrow(mushrooms.test), "\n")
 cat("Train/Total Ratio:", nrow(mushrooms.training) / total_rows, "\n")
 cat("Test/Total Ratio:", nrow(mushrooms.test) / total_rows, "\n")
 
-# Missing Values Removal
-mushrooms.df <- na.omit(mushrooms.df)
+# training set is still balanced
+class.table <- table(mushrooms.training$class)
+bp <- barplot(class.table, xlab="Classifications", ylab="Amount", 
+        main="Distribution of classifications",
+        col = c("#018100", "#fe0001") , border = "white", ylim = c(0, 3200))
+text(bp, class.table, paste(class.table), pos = 3, cex = 1) 
 
-#################################################
+###############################################
+#               Model Training                #
+###############################################
 
-# Model Training
+### SVM Training
 
-# SVM Training
+# Convert class variables to factors with the same levels
 mushrooms.training$class <- as.factor(mushrooms.training$class)
 
 svm.model <- svm(class ~ ., data = mushrooms.training, kernel = 'linear')
 print(svm.model)
 
-#################################################
+###############################################
+#           Performance Evaluation            #
+###############################################
 
-# Performance Evaluation
+### Confusion Matrix
 
-# Confusion Matrix
+# Convert class variables to factors with the same levels
+mushrooms.test$class <- factor(mushrooms.test$class, levels = levels(svm.pred))
+
 # Predict using the SVM model on the test set
 svm.pred <- predict(svm.model, mushrooms.test)
 
 # Compute confusion matrix
 confusionMatrix(mushrooms.test$class, svm.pred)
 
-# Precision, Recall and F-Measure
-# Convert class variables to factors with the same levels
-mushrooms.test$class <- factor(mushrooms.test$class, levels = levels(svm.pred))
+### Precision, Recall and F-Measure
 
 # Compute confusion matrix with precision-recall mode
 confusionMatrix(mushrooms.test$class, svm.pred, mode = "prec_recall")
-
