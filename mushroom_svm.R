@@ -41,7 +41,8 @@ vis_miss(mushrooms.df)
 
 # Dataset Dimensions
 dim(mushrooms.df)
-str(mushrooms.df)
+
+# Class Distributions for every Features
 
 # Define function to convert ggplot to plotly
 ggplot_to_plotly <- function(ggplot_obj){
@@ -53,8 +54,6 @@ ggplot_to_plotly <- function(ggplot_obj){
 
 #Taking the backup the data set Mushroom & checking the distinct value of it
 mush <- mushrooms.df %>% distinct()
-
-# Class Distributions for every Features
 
 # Convert ggplot histograms to plotly histograms with customizations
 cap_shape_hist <- ggplot(mush, aes(x = cap.shape, fill = class)) + 
@@ -74,7 +73,7 @@ cap_surface_hist <- ggplot(mush, aes(x = cap.surface, fill = class)) +
 cap_surface_plotly <- ggplot_to_plotly(cap_surface_hist)
 cap_surface_plotly
 
-cap_clor_hist <- ggplot(mush, aes(x = cap.color, fill = class)) + 
+cap_color_hist <- ggplot(mush, aes(x = cap.color, fill = class)) + 
   geom_bar(alpha = 1, colour = "black", linewidth = 0.5) +  
   ggtitle("CAP COLOR") + 
   theme(plot.title = element_text(hjust = 0)) + 
@@ -251,9 +250,6 @@ spore_print_color_plotly
 population_plotly
 habitat_plotly
 
-# Only feature with 1 attribute
-summary(mush$veil.type)
-
 # Set the theme settings
 my_theme <- theme(
   plot.title = element_text(size = 20, hjust = 0.5),  # Center the plot title and increase its size
@@ -262,7 +258,6 @@ my_theme <- theme(
   axis.title = element_text(size = 16),                # Increase axis title size
   axis.text = element_text(size = 14)                  # Increase axis text size
 )
-
 
 # visualization of instances' distributions
 ggplot(mush, aes(x = cap.color, y = bruises, col = class)) + 
@@ -314,9 +309,6 @@ ggplot(mushrooms.df, aes(x = class, y = stalk.root, col = class)) +
   my_theme +
   theme(plot.margin = margin(20, 20, 20, 20))
 
-summary(mushrooms.df)
-sum(is.na(mushrooms.df)) # No Na values
-
 
 ###############################################
 #             Data Preprocessing              #
@@ -349,8 +341,6 @@ train_rows <- nrow(mushrooms.training)
 test_rows <- nrow(mushrooms.test)
 cat("Number of rows in the train dataset:", train_rows, "\n")
 cat("Number of rows in the test dataset:", test_rows, "\n")
-
-cat("Train/Test Ratio:", nrow(mushrooms.training) / nrow(mushrooms.test), "\n")
 cat("Train/Total Ratio:", nrow(mushrooms.training) / total_rows, "\n")
 cat("Test/Total Ratio:", nrow(mushrooms.test) / total_rows, "\n")
 
@@ -360,6 +350,14 @@ bp <- barplot(class.table, xlab="Classifications", ylab="Amount",
         main="Distribution of classifications",
         col = c("#018100", "#fe0001") , border = "white", ylim = c(0, 3200))
 text(bp, class.table, paste(class.table), pos = 3, cex = 1) 
+
+# Extract the test data
+test_data <- mushrooms.test
+
+# Write the test data to a CSV file
+# write.csv(test_data, file = "/home/jrzvnn/Documents/Projects/mushroom-svm/mushrooms_test.csv", row.names = FALSE)
+
+str(mushrooms.df)
 
 ###############################################
 #               Model Training                #
@@ -373,22 +371,23 @@ mushrooms.training$class <- as.factor(mushrooms.training$class)
 svm.model <- svm(class ~ ., data = mushrooms.training, kernel = 'linear')
 print(svm.model)
 
+# Save the SVM model to a file
+saveRDS(svm.model, file = "/home/jrzvnn/Documents/Projects/mushroom-svm/svm_model.rds")
+
 ###############################################
 #           Performance Evaluation            #
 ###############################################
 
 ### Confusion Matrix
 
-# Convert class variables to factors with the same levels
-mushrooms.test$class <- factor(mushrooms.test$class, levels = levels(svm.pred))
-
 # Predict using the SVM model on the test set
 svm.pred <- predict(svm.model, mushrooms.test)
 
-# Compute confusion matrix
-confusionMatrix(mushrooms.test$class, svm.pred)
+# Convert class variables to factors with the same levels
+mushrooms.test$class <- factor(mushrooms.test$class, levels = levels(svm.pred))
 
 ### Precision, Recall and F-Measure
 
 # Compute confusion matrix with precision-recall mode
 confusionMatrix(mushrooms.test$class, svm.pred, mode = "prec_recall")
+
